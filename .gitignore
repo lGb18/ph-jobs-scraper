@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Environments
+.env
+.venv/
+venv/
+env/
+
+# Scrapy
+.scrapy/
+output.json
+output.csv
+
+# Playwright
+playwright-async*.json
+ms-playwright/
+# IDE
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
