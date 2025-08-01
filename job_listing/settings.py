@@ -46,7 +46,10 @@ DEFAULT_REQUEST_HEADERS = {
     'Accept-Language': 'en-US,en;q=0.5',
     'Referer': 'https://ph.jobstreet.com/',
 }
-
+LAYWRIGHT_BROWSER_TYPE = "chromium" 
+PLAYWRIGHT_LAUNCH_OPTIONS = {
+    "headless": False, 
+}
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
