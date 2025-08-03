@@ -15,6 +15,7 @@ class WebOne(scrapy.Spider):
                     "playwright_page_methods": [
                         PageMethod("fill", "#keywords-input", "developer"),
                         PageMethod("click", "#searchButton"),
+                        PageMethod("wait_for_selector", '[data-testid="job-card-title"]', timeout=15000),
                     ],
             
                 },
@@ -24,13 +25,20 @@ class WebOne(scrapy.Spider):
     async def parse(self, response):
         page = response.meta["playwright_page"]
        
-        await page.wait_for_selector('article[aria-label]') 
+        articles = await page.locator('article').all()
         
-        articles = await page.locator('article[aria-label]').all()
         for article in articles:
-            title = await article.get_attribute('aria-label')
             
-            yield {"title": title.strip()}
+            title = await article.locator('a[data-testid="job-card-title"]').text_content()
+            company = await article.locator('a[data-type="company"]').text_content()
+            
+            locations = await article.locator('a[data-type="location"]').all()
+            city = await locations[0].text_content() if locations else "N/A"
+            region = await locations[1].text_content() if len(locations) > 1 else "N/A"
+            yield {"Job Title": title.strip(),
+                   "Company": company.strip(),
+                   "City": city.strip(),
+                   "Region": region.strip()}
         
-        
+              
         await page.close()

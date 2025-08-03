@@ -37,6 +37,10 @@ DOWNLOAD_HANDLERS = {
     "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
     "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
 }
+PLAYWRIGHT_CONTEXT_KWARGS = {
+'ignore_https_errors': True,
+'viewport': {'width': 1920, 'height': 1080}
+}
 # settings.py
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 # Override the default request headers:
