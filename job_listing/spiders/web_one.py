@@ -25,17 +25,20 @@ class WebOne(scrapy.Spider):
     async def parse(self, response):
         page = response.meta["playwright_page"]
        
+       #Jobstreet Job Card
         articles = await page.locator('article').all()
         
-        for article in articles:
-            
+        #Visible Job data Extraction
+        for article in articles:      
             title = await article.locator('a[data-testid="job-card-title"]').text_content()
             company = await article.locator('a[data-type="company"]').text_content()
             job_link = await article.locator('a').first.get_attribute('href')
+            apply_link = await article.get_attribute('data-job-id')
+
             locations = await article.locator('a[data-type="location"]').all()
             city = await locations[0].text_content() if locations else "N/A"
             region = await locations[1].text_content() if len(locations) > 1 else "N/A"
-            apply_link = await article.get_attribute('data-job-id')
+            
             base_url = "https://ph.jobstreet.com"
             yield {"Job Title": title.strip(),
                    "Company": company.strip(),
