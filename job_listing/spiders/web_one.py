@@ -17,7 +17,7 @@ class WebOne(scrapy.Spider):
                         PageMethod("wait_for_load_state", "networkidle"),
                         PageMethod("fill", "#keywords-input", "developer"),
                         PageMethod("click", "#searchButton"),
-                        PageMethod("wait_for_selector", '[data-testid="job-card-title"]', timeout=15000),
+                        PageMethod("wait_for_selector", '[data-testid="job-card-title"]', timeout=15000),                      
                     ],
             
                 },
@@ -26,32 +26,56 @@ class WebOne(scrapy.Spider):
 
     async def parse(self, response):
         page = response.meta["playwright_page"]
-        next_button = page.locator('a[rel="nofollow next"]')
-        
-       #Jobstreet Job Card
-        while next_button.is_visible:
-            articles = await page.locator('article').all()
-            
-            #Visible Job data Extraction
-            for article in articles:      
-                title = await article.locator('a[data-testid="job-card-title"]').text_content()
-                company = await article.locator('a[data-type="company"]').text_content()
-                job_link = await article.locator('a').first.get_attribute('href')
-                apply_link = await article.get_attribute('data-job-id')
+        base_url = "https://ph.jobstreet.com"
+        # await page.locator('a[title="Next"]')
+        articles = await page.locator('article').all()
+        #Visible Job data Extraction
+        for article in articles:      
+            title = await article.locator('a[data-testid="job-card-title"]').text_content()
+            company = await article.locator('a[data-type="company"]').text_content()
+            job_link = await article.locator('a').first.get_attribute('href')
+            apply_link = await article.get_attribute('data-job-id')
 
-                locations = await article.locator('a[data-type="location"]').all()
-                city = await locations[0].text_content() if locations else "N/A"
-                region = await locations[1].text_content() if len(locations) > 1 else "N/A"
-                
-                base_url = "https://ph.jobstreet.com"
-                yield {"Job Title": title.strip(),
-                    "Company": company.strip(),
-                    "City": city.strip(),
-                    "Region": region.strip(),
-                    "Job Link": base_url+job_link.strip(),
-                    "Apply Link": base_url+"/job/"+apply_link+"/apply".strip()}
+            locations = await article.locator('a[data-type="location"]').all()
+            city = await locations[0].text_content() if locations else "N/A"
+            region = await locations[1].text_content() if len(locations) > 1 else "N/A"
+            
+            base_url = "https://ph.jobstreet.com"
+            yield {"Job Title": title.strip(),
+                "Company": company.strip(),
+                "City": city.strip(),
+                "Region": region.strip(),
+                "Job Link": base_url+job_link.strip(),
+                "Apply Link": base_url+"/job/"+apply_link+"/apply".strip()}
+       #Jobstreet Job Card
+        pagenum = 1
+        if await page.locator('a[rel="nofollow next"]').is_visible():
+            await page.locator('a[rel="nofollow next"]').click()
+            current_url = page.url
+            yield scrapy.Request
+            {
+                "url": current_url,
+                "meta": {
+                    "playwright": True,
+                    "playwright_include_page": True,
+                    "playwright_page_methods": [
+                        PageMethod("wait_for_load_state", "domcontentloaded"),
+                        PageMethod("wait_for_load_state", "networkidle"),
+                        PageMethod("fill", "#keywords-input", "developer"),
+                        PageMethod("click", "#searchButton"),
+                        PageMethod("wait_for_selector", '[data-testid="job-card-title"]', timeout=15000),
+                        
+                    ],
+                },
+                "callback": self.parse,
+            }
+            
+        
             
             #Click next button
-            next_button.click() 
+            # next_page = page.locator('a[rel="nofollow next"]').get_attribute('href')
+            
+
+           
                 
         await page.close()
