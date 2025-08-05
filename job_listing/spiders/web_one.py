@@ -13,6 +13,8 @@ class WebOne(scrapy.Spider):
                     "playwright": True,
                     "playwright_include_page": True,
                     "playwright_page_methods": [
+                        PageMethod("wait_for_load_state", "domcontentloaded"),
+                        PageMethod("wait_for_load_state", "networkidle"),
                         PageMethod("fill", "#keywords-input", "developer"),
                         PageMethod("click", "#searchButton"),
                         PageMethod("wait_for_selector", '[data-testid="job-card-title"]', timeout=15000),
