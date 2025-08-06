@@ -47,7 +47,20 @@ class WebOne(scrapy.Spider):
                 "Apply Link": base_url + "/job/" + apply_link + "/apply" if apply_link else None
             }
        #Jobstreet Job Card
-        
+        if response.css('a[title="Next"]'):
+            yield scrapy.Request(
+                url=response.url,
+                meta={
+                    "playwright": True,
+                    "playwright_include_page": True,
+                    "playwright_page_methods":[
+                        PageMethod("click", 'a[title="Next"]'),
+                        PageMethod("wait_for_load_state", "domcontentloaded"),
+                        PageMethod("wait_for_load_state", "networkidle"),
+                        PageMethod("wait_for_selector", '[data-testid="job-card-title"]', timeout=15000),
+                    ]
+                }
+            )
         
             
             #Click next button
