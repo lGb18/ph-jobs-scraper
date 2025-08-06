@@ -15,8 +15,7 @@ NEWSPIDER_MODULE = "job_listing.spiders"
 ADDONS = {}
 
 DOWNLOAD_DELAY = 2
-# Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "job_listing (+http://www.yourdomain.com)"
+
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True

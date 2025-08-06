@@ -1,6 +1,4 @@
 # import scrapy
-# from scrapy_playwright import PageMethod
-
 
 # class WebTwo(scrapy.Spider):
 #     name = "web_two"
