@@ -25,7 +25,8 @@ class WebOne(scrapy.Spider):
                 callback=self.parse,
         )
     
-    def parse(self, response):
+    async def parse(self, response):
+        page = response.meta["playwright_page"]
         base_url = "https://ph.jobstreet.com"
 
         #Extract
@@ -48,7 +49,7 @@ class WebOne(scrapy.Spider):
                 "Apply Link": base_url + "/job/" + apply_link + "/apply" if apply_link else None
             }
        
-        
+        await page.close()
         next_page = response.css('a[rel="nofollow next"]::attr(href)').get()
         if next_page:
             yield scrapy.Request(
