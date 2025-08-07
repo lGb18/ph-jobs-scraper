@@ -14,7 +14,8 @@ class WebTwo(scrapy.Spider):
                     "playwright_include_page": True,
                     "playwright_page_methods": [   
                         PageMethod("fill", "#ctl00_BodyContentPlaceHolder_searchterm", "developer"),
-                        PageMethod("click","#ctl00_BodyContentPlaceHolder_Button1")
+                        PageMethod("click", 'input[type="submit"][value="Search"]'),
+                        
                         
                     ]
                 },
@@ -24,6 +25,7 @@ class WebTwo(scrapy.Spider):
     def parse(self, response):
         page = response.meta["playwright_page"]
         base_url = "https://philjobnet.gov.ph/job-vacancies"
+        # await page.locator('input [id="ctl00_BodyContentPlaceHolder_Button1"]').click()
 
         for jobCard in response.css("div.jobcard"):
             title = jobCard.css('h1.jobtitle::text').get()
