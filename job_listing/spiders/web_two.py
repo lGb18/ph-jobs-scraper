@@ -36,21 +36,25 @@ class WebTwo(scrapy.Spider):
             }
         page_num = 1
         
-        next_page = response.css('a::attr(href)')
-        if await page.is_visible('a[href="javascript:__doPostBack(\'ctl00$BodyContentPlaceHolder$GridView1\',\'Page$Last\')"]'):
-            page_num += 1
-            await page.evaluate(f"window.__doPostBack('ctl00$BodyContentPlaceHolder$GridView1','Page$ + {page_num}')")
-            current_url = response.url
+        data_table = page.locator('#ctl00_BodyContentPlaceHolder_GridView1')
+        
+
+        while True:
+           
+            next_page = data_table.get_by_role('link', name=f'{page_num + 1}', exact=True)
+            await next_page.click()
+            page_num += 1 
             yield scrapy.Request(
-               url=current_url,
+                url=page.url,
                 meta={
                     "playwright": True,
                     "playwright_include_page": True,
                     "playwright_page_methods": [
-                       
-                        PageMethod("wait_for_load_state", "domcontentloaded"),
+                        PageMethod("wait_for_selector", '#ctl00_BodyContentPlaceHolder_GridView1'),
                         PageMethod("wait_for_load_state", "networkidle"),
-                    ]
+                        PageMethod("wait_for_load_state", "domcontentloaded"),
+
+                    ],
                 },
                 callback=self.parse,
             )
