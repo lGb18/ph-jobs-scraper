@@ -17,7 +17,7 @@ class WebTwo(scrapy.Spider):
             page_num = 1
 
             # Landing URL
-            base_url = "https://philjobnet.gov.ph/job-vacancies"
+            base_url = "https://philjobnet.gov.ph"
             for i in range(10):
                 next_page = page_num + 1
                 nexts_page = page.locator('#ctl00_BodyContentPlaceHolder_GridView1')
