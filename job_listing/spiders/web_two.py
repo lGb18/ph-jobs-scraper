@@ -15,6 +15,9 @@ class WebTwo(scrapy.Spider):
 
             await page.goto(response.url)
             page_num = 1
+
+            # Landing URL
+            base_url = "https://philjobnet.gov.ph/job-vacancies"
             for i in range(10):
                 next_page = page_num + 1
                 nexts_page = page.locator('#ctl00_BodyContentPlaceHolder_GridView1')
@@ -24,11 +27,13 @@ class WebTwo(scrapy.Spider):
 
                 page_num +=1
                 j_title = await page.locator('h1').all()
-                for jobCard in j_title:
-                    title = await jobCard.text_content()
-
+                j_card = await page.locator('td a[class="nolink"]').all()
+                for i,j in zip(j_title,j_card):
+                    title = await i.text_content()
+                    link = await j.get_attribute('href')
                     yield {
-                        "JO": title.strip()
+                        "JO": title.strip() if title else None,
+                        "Job Link": base_url + link.strip() if link else None
 
                     }
 
