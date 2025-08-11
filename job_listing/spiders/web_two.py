@@ -26,14 +26,20 @@ class WebTwo(scrapy.Spider):
                 await next_pagge.click()
 
                 page_num +=1
+
+                # Selector reference
                 j_title = await page.locator('h1').all()
                 j_card = await page.locator('td a[class="nolink"]').all()
-                for i,j in zip(j_title,j_card):
+                j_company = await page.locator('span.companytitle').all()
+                # Extract loop
+                for i,j, k in zip(j_title,j_card, j_company):
                     title = await i.text_content()
                     link = await j.get_attribute('href')
+                    company = await k.text_content()
                     yield {
                         "JO": title.strip() if title else None,
-                        "Job Link": base_url + link.strip() if link else None
+                        "Job Link": base_url + link.strip() if link else None,
+                        "Company": company.strip() if company else None
 
                     }
 
