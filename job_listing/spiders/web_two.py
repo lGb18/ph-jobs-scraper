@@ -15,22 +15,21 @@ class WebTwo(scrapy.Spider):
 
             await page.goto(response.url)
             page_num = 1
-
-            # Landing URL
             base_url = "https://philjobnet.gov.ph"
-            for i in range(10):
-                next_page = page_num + 1
-                nexts_page = page.locator('#ctl00_BodyContentPlaceHolder_GridView1')
-                # next_page.click()
-                next_pagge = nexts_page.get_by_role('link', name=f'{str(next_page)}', exact=True)
-                await next_pagge.click()
-
-                page_num +=1
-
+            
+            # Search wtih Keyword
+            await page.locator('#ctl00_BodyContentPlaceHolder_searchterm').click()
+            await page.locator('#ctl00_BodyContentPlaceHolder_searchterm').fill('developer')
+            # button_click = page.locator('#ctl00_BodyContentPlaceHolder_Button1')
+            await page.get_by_role('button', name= "Search" ).click()
+            
+            
+            for i in range(3):
                 # Selector reference
                 j_title = await page.locator('h1').all()
                 j_card = await page.locator('td a[class="nolink"]').all()
                 j_company = await page.locator('span.companytitle').all()
+
                 # Extract loop
                 for i,j, k in zip(j_title,j_card, j_company):
                     title = await i.text_content()
@@ -42,5 +41,16 @@ class WebTwo(scrapy.Spider):
                         "Company": company.strip() if company else None
 
                     }
+                # Next Page Reference
+                next_page = page_num + 1
+                nexts_page = page.locator('#ctl00_BodyContentPlaceHolder_GridView1')
+                # Click Next Page
+                next_pagge = nexts_page.get_by_role('link', name=f'{str(next_page)}', exact=True)
+                await next_pagge.click()
+
+                page_num +=1
+
+               
+                
 
         
