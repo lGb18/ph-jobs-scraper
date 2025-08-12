@@ -22,10 +22,11 @@ class WebTwo(scrapy.Spider):
             await page.locator('#ctl00_BodyContentPlaceHolder_searchterm').fill('developer')
             # button_click = page.locator('#ctl00_BodyContentPlaceHolder_Button1')
             await page.get_by_role('button', name= "Search" ).click()
+            
             job_openings = await page.locator('div.col-lg-12.label').text_content()
             jo_numbers = ''.join([n for n in job_openings if n.isdigit()])
             divisibles = int(jo_numbers) / 10
-            
+
             for i in range(int(divisibles)):
                 # Selector reference
                 j_title = await page.locator('h1').all()
@@ -33,19 +34,22 @@ class WebTwo(scrapy.Spider):
                 j_company = await page.locator('span.companytitle').all()
                 j_location = await page.locator('div.col-lg-5.col-sm-12').all()
                 j_date_posted = await page.locator('span.jobinfo').all()
+                j_type = await page.locator('div.col-lg-3.col-sm-12').all()
                 # Extract loop
-                for i, j, k, l, m in zip(j_title,j_card, j_company, j_location, j_date_posted):
+                for i, j, k, l, m, n in zip(j_title,j_card, j_company, j_location, j_date_posted, j_type):
                     title = await i.text_content()
                     link = await j.get_attribute('href')
                     company = await k.text_content()
                     location = await l.text_content()
                     date_posted = await m.text_content()
+                    job_type = await n.text_content()
                     yield {
                         "JO": title.strip() if title else None,
                         "Job Link": base_url + link.strip() if link else None,
                         "Company": company.strip() if company else None,
                         "Location": location.strip() if location else None,
-                        "Other info": date_posted.strip() if date_posted else None
+                        "Other info": date_posted.strip() if date_posted else None,
+                        "Job Type": job_type.strip() if job_type else None
                     }
                 # Next Page Reference
                 next_page = page_num + 1
