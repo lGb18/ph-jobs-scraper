@@ -22,9 +22,11 @@ class WebTwo(scrapy.Spider):
             await page.locator('#ctl00_BodyContentPlaceHolder_searchterm').fill('developer')
             # button_click = page.locator('#ctl00_BodyContentPlaceHolder_Button1')
             await page.get_by_role('button', name= "Search" ).click()
+            job_openings = await page.locator('div.col-lg-12.label').text_content()
+            jo_numbers = ''.join([n for n in job_openings if n.isdigit()])
+            divisibles = int(jo_numbers) / 10
             
-            
-            for i in range(3):
+            for i in range(int(divisibles)):
                 # Selector reference
                 j_title = await page.locator('h1').all()
                 j_card = await page.locator('td a[class="nolink"]').all()
@@ -50,9 +52,15 @@ class WebTwo(scrapy.Spider):
                 nexts_page = page.locator('#ctl00_BodyContentPlaceHolder_GridView1')
                 # Click Next Page
                 next_pagge = nexts_page.get_by_role('link', name=f'{str(next_page)}', exact=True)
-                await next_pagge.click()
-
-                page_num +=1
+                if next_pagge:
+                    await next_pagge.click()
+                    page_num +=1
+                
+            await page.close()
+            await browser.close()        
+                    
+                
+                
 
                
                 
