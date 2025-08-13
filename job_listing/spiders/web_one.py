@@ -4,6 +4,9 @@ from scrapy_playwright.page import PageMethod
 class WebOne(scrapy.Spider):
     name = "web_one"
     start_urls = ["https://ph.jobstreet.com/"]
+    custom_settings = {
+        'CLOSESPIDER_PAGECOUNT': 5,
+        }
     
     def start_requests(self):
         for url in self.start_urls:
@@ -24,11 +27,11 @@ class WebOne(scrapy.Spider):
                 },
                 callback=self.parse,
         )
-    
+
     async def parse(self, response):
         page = response.meta["playwright_page"]
         base_url = "https://ph.jobstreet.com"
-
+        page_count = 1
         #Extract
         for article in response.css("article"):
             title = article.css('a[data-testid="job-card-title"]::text').get()
@@ -66,9 +69,4 @@ class WebOne(scrapy.Spider):
                 },
                 callback=self.parse,
             )
-        
             
-           
-
-           
-        
