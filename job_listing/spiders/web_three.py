@@ -29,10 +29,12 @@ class WebThreeSpider(scrapy.Spider):
         for jobcard in response.css('div[style="position: relative;"]'):
             title = jobcard.css('h4::text').get()
             posted_date = jobcard.css('em::text').get()
+            post_author = jobcard.css('p::text').get()
 
             yield {
                 "Job Title": title.strip() if title else None,
-                "Date Posted": posted_date.strip() if posted_date else None
+                "Date Posted": posted_date.strip() if posted_date else None,
+                "Author": post_author.strip() if post_author else None
             }
 
 
