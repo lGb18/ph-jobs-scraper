@@ -26,11 +26,13 @@ class WebThreeSpider(scrapy.Spider):
     def parse(self, response):
         page = response.meta["playwright_page"]
         
-        for jobcard in response.css('dt[class="col"]'):
+        for jobcard in response.css('div[style="position: relative;"]'):
             title = jobcard.css('h4::text').get()
+            posted_date = jobcard.css('em::text').get()
 
             yield {
-                "Job Title": title.strip() if title else None
+                "Job Title": title.strip() if title else None,
+                "Date Posted": posted_date.strip() if posted_date else None
             }
 
 
