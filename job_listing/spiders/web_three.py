@@ -17,6 +17,8 @@ class WebThreeSpider(scrapy.Spider):
                     "playwright_page_methods": [
                         PageMethod("wait_for_load_state", "domcontentloaded"),
                         PageMethod("wati_for_load_state", "networkidle"),
+                        PageMethod("fill", "#jobkeyword", "developer"),
+                        PageMethod("click", 'button[value="Search Job"]'),
                     ],
                 },
                 callback=self.parse,
@@ -38,7 +40,8 @@ class WebThreeSpider(scrapy.Spider):
                 "Author": post_author.strip() if post_author else None,
                 "Link": base_url + job_link.strip() if job_link else None
             }
-
+        
+        
 
 
 
