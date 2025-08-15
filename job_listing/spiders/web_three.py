@@ -25,16 +25,18 @@ class WebThreeSpider(scrapy.Spider):
     
     def parse(self, response):
         page = response.meta["playwright_page"]
-        
+        base_url = "onlinejobs.ph"
         for jobcard in response.css('div[style="position: relative;"]'):
             title = jobcard.css('h4::text').get()
             posted_date = jobcard.css('em::text').get()
             post_author = jobcard.css('p::text').get()
+            job_link = jobcard.css('a::attr(href)').get()
 
             yield {
                 "Job Title": title.strip() if title else None,
                 "Date Posted": posted_date.strip() if posted_date else None,
-                "Author": post_author.strip() if post_author else None
+                "Author": post_author.strip() if post_author else None,
+                "Link": base_url + job_link.strip() if job_link else None
             }
 
 
