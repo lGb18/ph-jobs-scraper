@@ -5,7 +5,7 @@ class WebThreeSpider(scrapy.Spider):
     name = "web_three"
     start_urls = ["https://www.onlinejobs.ph/jobseekers/jobsearch"]
     custom_settings = {
-        'CLOSESPIDER_PAGECOUNT': 1,
+        'CLOSESPIDER_PAGECOUNT': 5,
         }
     def start_requests(self):
         for url in self.start_urls:
@@ -25,7 +25,8 @@ class WebThreeSpider(scrapy.Spider):
             
             )
     
-    def parse(self, response):
+    async def parse(self, response):
+        
         page = response.meta["playwright_page"]
         base_url = "onlinejobs.ph"
         for jobcard in response.css('div[style="position: relative;"]'):
@@ -40,6 +41,22 @@ class WebThreeSpider(scrapy.Spider):
                 "Author": post_author.strip() if post_author else None,
                 "Link": base_url + job_link.strip() if job_link else None
             }
+
+        await page.close() 
+        next_page = response.css('a[rel="next"]::attr(href)').get()
+        if next_page:            
+            yield scrapy.Request (
+                url = next_page,
+                meta = {
+                    "playwright": True,
+                    "playwright_include_page": True,
+                    "playwright_page_methods": [
+                        PageMethod("wait_for_load_state", "domcontentloaded"),
+                        PageMethod("wati_for_load_state", "networkidle"),
+                    ],
+                },
+                callback=self.parse,
+            )
         
         
 
