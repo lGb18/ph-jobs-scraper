@@ -27,9 +27,9 @@ class WebFour(scrapy.Spider):
     def parse(self, response):
         page = response.meta["playwright_page"]
 
-        for jobcards in ('h2.a'):
-            title = response.css('::text').get()
-            job_link = response.css('::attr(href)').get()
+        for jobcards in response.css('h2'):
+            title = jobcards.css('::text').get()
+            job_link = jobcards.css('::attr(href)').get()
 
             yield {
                 "Job Title": title.strip() if title else None,
