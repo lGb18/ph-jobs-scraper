@@ -12,5 +12,5 @@ class WebFour(scrapy.Spider):
     def parse(self, response):
         web_data = json.loads(response.body)
 
-        job_list = [{ "Job Title": jobs["name"], "Company": jobs["companyName"] } for jobs in web_data['pageProps']['jobs']]
+        job_list = [{ "Job Title": jobs["name"], "Company": jobs["companyName"], "Job Link": f'https://www.kalibrr.com/c/{jobs["company"]["code"]}/jobs/{jobs["id"]}/{jobs["slug"]}' } for jobs in web_data['pageProps']['jobs']]
         yield from job_list
