@@ -1,13 +1,9 @@
 import scrapy
-from scrapy_playwright.page import PageMethod
 import json
+
 class WebFour(scrapy.Spider):
     name = "web_four"
     start_urls = ["https://www.kalibrr.com/kjs/job_board/search?limit=500&offset=0&text=developer"]
-    custom_settings = {
-        'CLOSESPIDER_PAGECOUNT': 5,
-        }
-    
     
     def parse(self, response):
         web_data = json.loads(response.body)
