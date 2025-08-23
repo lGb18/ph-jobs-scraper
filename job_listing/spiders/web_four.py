@@ -3,7 +3,7 @@ from scrapy_playwright.page import PageMethod
 
 class WebFour(scrapy.Spider):
     name = "web_four"
-    start_urls = ["https://www.kalibrr.com/home/te/DEVELOPER"]
+    start_urls = ["https://www.kalibrr.com/_next/data/-fHXcxPVjzAEIkO7CkhrK/en/home/te/developer.json?param=te&param=developer"]
     custom_settings = {
         'CLOSESPIDER_PAGECOUNT': 5,
         }
@@ -27,11 +27,12 @@ class WebFour(scrapy.Spider):
     def parse(self, response):
         page = response.meta["playwright_page"]
 
-        for jobcards in response.css('h2'):
-            title = jobcards.css('::text').get()
-            job_link = jobcards.css('::attr(href)').get()
+        print(response.body)
+        # for jobcards in response.css('main'):
+        #     title = jobcards.css('h2.a::text').get()
+        #     job_link = jobcards.css('h2.a::attr(href)').get()
 
-            yield {
-                "Job Title": title.strip() if title else None,
-                "Job Link": job_link.strip() if title else None
-            }
+        #     yield {
+        #         "Job Title": title.strip() if title else None,
+        #         "Job Link": job_link.strip() if title else None
+        #     }
