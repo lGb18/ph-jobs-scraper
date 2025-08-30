@@ -1,32 +1,23 @@
 import scrapy
-from scrapy_playwright.page import PageMethod
+from playwright.async_api import async_playwright
 
 
 class WebFive(scrapy.Spider):
     name = "web_five"
-    start_url = ["https://bossjob.ph"]
+    start_urls = ["https://bossjob.ph"]
 
+    async def parse(self, response):
+        async with async_playwright() as p:
+        
+            browser = await p.chromium.launch(headless=False, devtools=False)
+            context = await browser.new_context()
+            page = await context.new_page()
 
-    def start_requests(self):
-        for url in self.start_url:
-            yield scrapy.Request(
-                url,
-                meta= {
-                    "playwright" : True,
-                    "playwright_include_page": True,
-                    "playwright_page_methods": [
-                        PageMethod("wait_for_load_state", "domcontentloaded"),
-                        PageMethod("wait_for_load_state", "networkidle"),
-                        PageMethod("fill",'#rsc_select_1', "developer" ),
-                        PageMethod("click", ".style_searchButton__FmHXW.yolo-search-button"),
-                        # await page.locator('#rc_select_1').fill('developer');
-                        # await page.getByRole('search').getByText('Search').click();
-                    ],
-                },
-                callback=self.parse,
-                
-            )
-    
-    def parse(self, response):
-        page = response.meta["playwright-page"]
+            await page.goto(response.url)
+
+            await page.locator('#rc_select_1').click()
+            await page.locator('#rc_select_1').fill('developer')
+            bttn = page.get_by_role('search')
+            await bttn.get_by_text('Search').click()
+
 
