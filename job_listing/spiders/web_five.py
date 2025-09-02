@@ -24,13 +24,20 @@ class WebFive(scrapy.Spider):
             
             j_title = await page.locator('div [data-sentry-component="JobCardPc"] h3').all()
             j_salary = await page.locator('div [data-sentry-component="JobCardPc"] span.index_pc_salaryText__k3HPE').all()
+            j_company = await page.locator('div [data-sentry-component="JobCardPc"] p').all()
+            j_location = await page.locator('div [data-sentry-component="JobCardPc"] span.index_pc_jobCardLocationItem__Gzujh:nth-child(3)').all()
+            
             # j_salary = await page.locator('span[class="index_pc_salaryText__k3HPE"]').all()
-            for i, j in zip(j_title, j_salary):
+            for i, j, k, l in zip(j_title, j_salary, j_company, j_location):
                 title = await i.text_content()
                 salary = await j.text_content()
+                company = await k.text_content()
+                location = await l.text_content()
                 yield {
                         "Job Title": title.strip(),
-                        "Salary": salary.strip()
+                        "Salary": salary.strip(),
+                        "Company": company.strip(),
+                        "Location": location.strip() 
                 }
                
 
